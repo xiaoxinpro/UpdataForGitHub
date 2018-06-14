@@ -22,9 +22,14 @@ namespace UpdataApp
 
         private Thread threadGetUpdataInfo;
 
-        public frmMain()
+        public frmMain(string[] args)
         {
             InitializeComponent();
+            Console.WriteLine("命令行参数：");
+            foreach (string item in args)
+            {
+                Console.WriteLine("  " + item);
+            }
         }
 
         private void frmMain_Load(object sender, EventArgs e)
@@ -55,7 +60,7 @@ namespace UpdataApp
 
             foreach (Assets item in jsonGitHub.versionInfo.ArrAssets)
             {
-                if (item.Name == "BleTestTool_V1_0.zip")
+                if (item.Name == "updata.zip")
                 {
                     swInfo.WriteLine("文件名：" + item.Name);
                     swInfo.WriteLine("下载数：" + item.Download_count);
@@ -64,7 +69,7 @@ namespace UpdataApp
                     AddDownloadFile(item.Name, item.Browser_download_url);
                 }
             }
-            swInfo.WriteLine(jsonGitHub.versionInfo.Body);
+            swInfo.WriteLine("更新记录：\r\n" + jsonGitHub.versionInfo.Body);
 
             this.Invoke((MethodInvoker)delegate ()
             {
