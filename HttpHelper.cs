@@ -11,7 +11,9 @@ namespace UpdataApp
     {
         public static string Send(string sUrl, string sParam = "", string method = "get")
         {
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+            //定义安全传输协议（TLS1.2=3702, TLS1.1=765, TLS1.0=192, SSL3=48）
+            ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;//TLS1.2=3702
+
             string result = "";
             HttpWebRequest req = WebRequest.Create(sUrl) as HttpWebRequest;
             HttpWebResponse res = null;
