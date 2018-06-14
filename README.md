@@ -33,8 +33,17 @@ https://api.github.com/repos/用户名/项目名/releases/latest
 
 ## 4、已知局限性
 
-由于Github的API的访问要求为TLS1.2，在C#中必须使用.net4.5框架。
+### 4.1、安全协议问题
+
+由于Github的API的访问要求为TLS1.2，在C#中必须使用.net4.5框架。(已解决)
 
 ```
-ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12; // 请求GitHub前需要运行
+ServicePointManager.SecurityProtocol = (SecurityProtocolType)3702; // 请求GitHub前需要运行
 ```
+
+使用框架已改为.Net4.0
+
+### 4.2、其他问题
+
+如有问题请提交[Issues](https://github.com/xiaoxinpro/UpdataForGitHub/issues)，谢谢支持！
+
