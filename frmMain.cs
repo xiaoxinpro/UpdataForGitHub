@@ -22,13 +22,21 @@ namespace UpdataApp
 
         private Thread threadGetUpdataInfo;
 
+        private CmdType cmdData;
+
         public frmMain(string[] args)
         {
             InitializeComponent();
+            InitCmdData();
             Console.WriteLine("命令行参数：");
             foreach (string item in args)
             {
                 Console.WriteLine("  " + item);
+                string[] arrStr = item.Trim().Split('=');
+                if (arrStr.Length == 2)
+                {
+                    InitCmdData(arrStr[0], arrStr[1]);
+                }
             }
         }
 
@@ -36,6 +44,50 @@ namespace UpdataApp
         {
             InitDownLoadFile();
             ReflashGitHubInfo();
+        }
+
+        private void InitCmdData(string strName = null, string strData = null)
+        {
+            if (strName == null)
+            {
+                cmdData.Username = cmdData.Username == null ? cmdData.Username : "";
+                cmdData.Project = cmdData.Project == null ? cmdData.Project : "";
+                cmdData.Title = cmdData.Title == null ? cmdData.Title : "";
+                cmdData.Version = cmdData.Version == null ? cmdData.Version : Version.Parse("0.0.0.1");
+                cmdData.Run = cmdData.Run == null ? cmdData.Run : "";
+            }
+            else
+            {
+                switch (strName)
+                {
+                    case "username":
+                    case "u":
+                        cmdData.Username = strData.Trim();
+                        break;
+                    case "project":
+                    case "p":
+                        cmdData.Project = strData.Trim();
+                        break;
+                    case "title":
+                    case "t":
+                        cmdData.Title = strData.Trim();
+                        break;
+                    case "version":
+                    case "v":
+                        cmdData.Version = System.Version.Parse(strData.Trim());
+                        break;
+                    case "run":
+                    case "r":
+                        cmdData.Run = strData.Trim();
+                        break;
+                    case "auto_run":
+                    case "ar":
+                        cmdData.IsAutoRun = Convert.ToBoolean(strData.Trim());
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
 
         private void StartGetUpdataInfoThread()
@@ -206,5 +258,15 @@ namespace UpdataApp
             btnUpdata.Enabled = false;
             downLoadFile.StartDown();
         }
+    }
+
+    public struct CmdType
+    {
+        public string Username;
+        public string Project;
+        public string Title;
+        public Version Version;
+        public string Run;
+        public bool IsAutoRun;
     }
 }
