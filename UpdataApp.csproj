@@ -58,6 +58,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="UpdataClass.cs" />
     <Compile Include="frmMain.cs">
       <SubType>Form</SubType>
     </Compile>
