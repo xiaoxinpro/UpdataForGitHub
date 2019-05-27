@@ -63,7 +63,7 @@ namespace UpdataApp
         /// <summary>
         /// 获取GitHub信息
         /// </summary>
-        private void GetGitHubInfo()
+        private void GetGitHubInfo(string fileName = "updata.zip")
         {
             string strCode = HttpHelper.Send(JsonGitHub.URL);
 
@@ -78,7 +78,7 @@ namespace UpdataApp
 
             foreach (Assets item in jsonGitHub.versionInfo.ArrAssets)
             {
-                if (item.Name == "updata.zip")
+                if (item.Name == fileName)
                 {
                     swInfo.WriteLine("文件名：" + item.Name);
                     swInfo.WriteLine("下载数：" + item.Download_count);
@@ -195,11 +195,12 @@ namespace UpdataApp
         /// <summary>
         /// 获取更新信息
         /// </summary>
-        public void Get()
+        /// <param name="fileName">需要跟新的文件名.zip</param>
+        public void Get(string fileName = "updata.zip")
         {
             Task.Factory.StartNew(() =>
             {
-                GetGitHubInfo();
+                GetGitHubInfo(fileName);
             });
         }
         
