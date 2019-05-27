@@ -18,11 +18,7 @@ namespace UpdataApp
 {
     public partial class frmMain : Form
     {
-        private DownLoadFile downLoadFile;
-
-        private Thread threadGetUpdataInfo;
-
-        private CmdType cmdData;
+        private UpdataClass UpdataInfo;
 
         public frmMain(string[] args)
         {
@@ -38,23 +34,45 @@ namespace UpdataApp
                     InitCmdData(arrStr[0], arrStr[1]);
                 }
             }
+            UpdataInfo = new UpdataClass(UpdataInfo_Event);
         }
 
         private void frmMain_Load(object sender, EventArgs e)
         {
-            InitDownLoadFile();
             ReflashGitHubInfo();
+        }
+
+        private void UpdataInfo_Event(object sender, EnumUpdataStatus status, string msg)
+        {
+            Console.WriteLine(status.ToString() + "\t->\t" + msg);
+            this.Invoke(new Action(() =>
+            {
+                switch (status)
+                {
+                    case EnumUpdataStatus.Start:
+                        break;
+                    case EnumUpdataStatus.GetJson:
+                        break;
+                    case EnumUpdataStatus.DownloadFile:
+                        break;
+                    case EnumUpdataStatus.Updata:
+                        break;
+                    case EnumUpdataStatus.Done:
+                        txtUpdataInfo.Text = msg;
+                        break;
+                    case EnumUpdataStatus.Error:
+                        break;
+                    default:
+                        break;
+                }
+            }));
         }
 
         private void InitCmdData(string strName = null, string strData = null)
         {
             if (strName == null)
             {
-                cmdData.Username = cmdData.Username == null ? cmdData.Username : "";
-                cmdData.Project = cmdData.Project == null ? cmdData.Project : "";
-                cmdData.Title = cmdData.Title == null ? cmdData.Title : "";
-                cmdData.Version = cmdData.Version == null ? cmdData.Version : Version.Parse("0.0.0.1");
-                cmdData.Run = cmdData.Run == null ? cmdData.Run : "";
+                //UpdataInfo属性复位
             }
             else
             {
@@ -62,180 +80,31 @@ namespace UpdataApp
                 {
                     case "username":
                     case "u":
-                        cmdData.Username = strData.Trim();
+                        UpdataInfo.Username = strData.Trim();
                         break;
                     case "project":
                     case "p":
-                        cmdData.Project = strData.Trim();
+                        UpdataInfo.Project = strData.Trim();
                         break;
                     case "title":
                     case "t":
-                        cmdData.Title = strData.Trim();
+                        UpdataInfo.Title = strData.Trim();
                         break;
                     case "version":
                     case "v":
-                        cmdData.Version = System.Version.Parse(strData.Trim());
+                        UpdataInfo.Version = System.Version.Parse(strData.Trim());
                         break;
                     case "run":
                     case "r":
-                        cmdData.Run = strData.Trim();
+                        UpdataInfo.Run = strData.Trim();
                         break;
                     case "auto_run":
                     case "ar":
-                        cmdData.IsAutoRun = Convert.ToBoolean(strData.Trim());
+                        UpdataInfo.IsAutoRun = Convert.ToBoolean(strData.Trim());
                         break;
                     default:
                         break;
                 }
-            }
-        }
-
-        private void StartGetUpdataInfoThread()
-        {
-            threadGetUpdataInfo = new Thread(new ThreadStart(GetGitHubInfo));
-            threadGetUpdataInfo.IsBackground = true;
-            threadGetUpdataInfo.Start();
-        }
-
-        private void GetGitHubInfo()
-        {
-            string strCode = HttpHelper.Send(JsonGitHub.URL);
-
-            JsonGitHub jsonGitHub = new JsonGitHub(strCode);
-
-            StringWriter swInfo = new StringWriter();
-
-            swInfo.WriteLine("项目名：" + jsonGitHub.versionInfo.Name);
-            swInfo.WriteLine("版本号：" + jsonGitHub.versionInfo.Version.ToString());
-            swInfo.WriteLine("强制性：" + jsonGitHub.versionInfo.Prerelease.ToString());
-            swInfo.WriteLine("日期：" + jsonGitHub.versionInfo.Published_at.ToString());
-
-            foreach (Assets item in jsonGitHub.versionInfo.ArrAssets)
-            {
-                if (item.Name == "updata.zip")
-                {
-                    swInfo.WriteLine("文件名：" + item.Name);
-                    swInfo.WriteLine("下载数：" + item.Download_count);
-                    swInfo.WriteLine("大小：" + item.Size);
-                    //下载
-                    AddDownloadFile(item.Name, item.Browser_download_url);
-                }
-            }
-            swInfo.WriteLine("更新记录：\r\n" + jsonGitHub.versionInfo.Body);
-
-            this.Invoke((MethodInvoker)delegate ()
-            {
-                txtUpdataInfo.Text = swInfo.ToString();
-                labelInfo.Text = "获取更新完成";
-                btnUpdata.Enabled = true;
-            });
-        }
-
-        private void InitDownLoadFile()
-        {
-            downLoadFile = new DownLoadFile();
-            downLoadFile.doSendMsg += SendMsgHander;
-        }
-
-        private string strDownFilePath;
-        private void AddDownloadFile(string name, string url)
-        {
-            string dir = System.AppDomain.CurrentDomain.BaseDirectory;
-            strDownFilePath = dir + name;
-            downLoadFile.AddDown(url, dir, 0, name);
-            Console.WriteLine("准备下载文件：" + name);
-        }
-
-        private void SendMsgHander(DownMsg msg)
-        {
-            switch (msg.Tag)
-            {
-                case DownStatus.Start:
-                    this.Invoke((MethodInvoker)delegate ()
-                    {
-                        Console.WriteLine("开始下载：" + DateTime.Now.ToString());
-                        labelInfo.Text = "正在连接服务器";
-                    });
-                    break;
-                case DownStatus.GetLength:
-                    this.Invoke((MethodInvoker)delegate ()
-                    {
-                        Console.WriteLine("连接成功：" + msg.LengthInfo);
-                        labelInfo.Text = "连接成功";
-                    });
-                    break;
-                case DownStatus.DownLoad:
-                    this.Invoke(new MethodInvoker(() =>
-                    {
-                        this.Invoke((MethodInvoker)delegate ()
-                        {
-                            if (msg.Tag == DownStatus.DownLoad)
-                            {
-                                Console.Write("下载中：");
-                                labelInfo.Text = "下载中" + msg.Progress.ToString() + "%";
-                                proUpdata.Value = Convert.ToInt32(msg.Progress);
-                            }
-                            else
-                            {
-                                Console.Write("下载完成：");
-                                proUpdata.Value = proUpdata.Maximum;
-                            }
-                            Console.WriteLine(msg.SizeInfo + "\t" + msg.Progress.ToString() + "%\t" + msg.SpeedInfo + "\t" + msg.SurplusInfo);
-                            Application.DoEvents();
-                        });
-                    }));
-                    break;
-                case DownStatus.End:
-                    this.Invoke((MethodInvoker)delegate ()
-                    {
-                        Console.WriteLine("下载完成！！！");
-                        labelInfo.Text = "下载完成";
-                        proUpdata.Value = proUpdata.Maximum;
-                        //System.Diagnostics.Process.Start(strDownFilePath);
-                    });
-                    //开始更新
-                    if (File.Exists(strDownFilePath))
-                    {
-                        System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
-                        watch.Start();
-                        try
-                        {
-                            //解压缩文件
-                            //ZipFile.ExtractToDirectory(strDownFilePath, System.AppDomain.CurrentDomain.BaseDirectory);
-                            ZipHelper.UnZip(strDownFilePath, System.AppDomain.CurrentDomain.BaseDirectory, "", true);
-
-                            //删除压缩包
-                            File.Delete(strDownFilePath);
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine("更新压缩包操作错误：" + ex.Message);
-                        }
-                        watch.Stop();
-                        TimeSpan timespan = watch.Elapsed;
-                        Console.WriteLine("解压缩执行时间：{0}(毫秒)", timespan.TotalMilliseconds);  //总毫秒数
-                        this.Invoke((MethodInvoker)delegate ()
-                        {
-                            Console.WriteLine("更新完成");
-                            labelInfo.Text = "更新完成";
-                            proUpdata.Value = proUpdata.Maximum;
-                            if (MessageBox.Show("是否运行更新后的程序？","更新完成",MessageBoxButtons.YesNo,MessageBoxIcon.Information) == DialogResult.Yes)
-                            {
-                                Process.Start(System.AppDomain.CurrentDomain.BaseDirectory + "BleTestTool.exe");
-                            }
-                            Application.Exit();
-                        });
-                    }
-                    break;
-                case DownStatus.Error:
-                    this.Invoke((MethodInvoker)delegate ()
-                    {
-                        Console.WriteLine("下载失败：" + msg.ErrMessage);
-                        labelInfo.Text = "下载失败：" + msg.ErrMessage;
-                    });
-                    break;
-                default:
-                    break;
             }
         }
 
@@ -245,7 +114,7 @@ namespace UpdataApp
             proUpdata.Value = 0;
             txtUpdataInfo.Clear();
             btnUpdata.Enabled = false;
-            StartGetUpdataInfoThread();
+            UpdataInfo.Get();
         }
 
         private void btnReflash_Click(object sender, EventArgs e)
@@ -256,17 +125,7 @@ namespace UpdataApp
         private void btnUpdata_Click(object sender, EventArgs e)
         {
             btnUpdata.Enabled = false;
-            downLoadFile.StartDown();
+            UpdataInfo.Start();
         }
-    }
-
-    public struct CmdType
-    {
-        public string Username;
-        public string Project;
-        public string Title;
-        public Version Version;
-        public string Run;
-        public bool IsAutoRun;
     }
 }
