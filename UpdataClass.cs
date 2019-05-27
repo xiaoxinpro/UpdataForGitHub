@@ -73,10 +73,17 @@ namespace UpdataApp
 
             StringWriter swInfo = new StringWriter();
 
-            swInfo.WriteLine("项目名：" + jsonGitHub.versionInfo.Name);
-            swInfo.WriteLine("版本号：" + jsonGitHub.versionInfo.Version.ToString());
-            swInfo.WriteLine("强制性：" + jsonGitHub.versionInfo.Prerelease.ToString());
-            swInfo.WriteLine("日期：" + jsonGitHub.versionInfo.Published_at.ToString());
+            try
+            {
+                swInfo.WriteLine("项目名：" + jsonGitHub.versionInfo.Name);
+                swInfo.WriteLine("版本号：" + jsonGitHub.versionInfo.Version.ToString());
+                swInfo.WriteLine("强制性：" + jsonGitHub.versionInfo.Prerelease.ToString());
+                swInfo.WriteLine("日期：" + jsonGitHub.versionInfo.Published_at.ToString());
+            }
+            catch (Exception err)
+            {
+                ActiveUpdataInfo(EnumUpdataStatus.Error, "获取更新信息错误");
+            }
 
             foreach (Assets item in jsonGitHub.versionInfo.ArrAssets)
             {
