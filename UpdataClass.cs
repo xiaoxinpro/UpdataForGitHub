@@ -12,6 +12,8 @@ namespace UpdataApp
     {
         #region 静态字段
         private DownLoadFile downLoadFile;
+        private Boolean isRunGet = false;
+        private Boolean isRunStart = false;
         #endregion
 
         #region 初始化
@@ -91,6 +93,7 @@ namespace UpdataApp
 
             ActiveUpdataInfo(EnumUpdataStatus.GetJson, swInfo.ToString());
 
+            isRunGet = false;
         }
 
         /// <summary>
@@ -144,6 +147,7 @@ namespace UpdataApp
                         Console.Write("下载完成：");
                         ActiveUpdataInfo(EnumUpdataStatus.DownloadFile, "下载完成！");
                         //proUpdata.Value = proUpdata.Maximum;
+                        isRunStart = false;
                     }
                     Console.WriteLine(msg.SizeInfo + "\t" + msg.Progress.ToString() + "%\t" + msg.SpeedInfo + "\t" + msg.SurplusInfo);
                     break;
@@ -179,13 +183,16 @@ namespace UpdataApp
                         Console.WriteLine("更新完成");
                         ActiveUpdataInfo(EnumUpdataStatus.Done, "更新完成");
                         //proUpdata.Value = proUpdata.Maximum;
+                        isRunStart = false;
                     }
                     break;
                 case DownStatus.Error:
                     ActiveUpdataInfo(EnumUpdataStatus.Error, "下载失败：" + msg.ErrMessage);
                     Console.WriteLine("下载失败：" + msg.ErrMessage);
+                    isRunStart = false;
                     break;
                 default:
+                    isRunStart = false;
                     break;
             }
         }
@@ -198,6 +205,11 @@ namespace UpdataApp
         /// <param name="fileName">需要跟新的文件名.zip</param>
         public void Get(string fileName = "updata.zip")
         {
+            if (isRunGet)
+            {
+                return;
+            }
+            isRunGet = true;
             Task.Factory.StartNew(() =>
             {
                 GetGitHubInfo(fileName);
@@ -210,6 +222,11 @@ namespace UpdataApp
         /// <param name="e"></param>
         public void Start()
         {
+            if (isRunStart)
+            {
+                return;
+            }
+            isRunStart = true;
             downLoadFile.StartDown();
         }
         #endregion
