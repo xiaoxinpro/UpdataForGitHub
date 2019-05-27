@@ -15,27 +15,30 @@ namespace UpdataApp
 
         public JsonGitHub(JObject jo)
         {
-            if (jo == null)
+            try
+            {
+                versionInfo.Name = jo["name"].ToString();
+                versionInfo.Version = new Version(jo["tag_name"].ToString().ToUpper().Replace('V', '0'));
+                versionInfo.Created_at = Convert.ToDateTime(jo["created_at"].ToString());
+                versionInfo.Published_at = Convert.ToDateTime(jo["published_at"].ToString());
+                versionInfo.Prerelease = Convert.ToBoolean(jo["prerelease"].ToString());
+                versionInfo.ArrAssets = new Assets[jo["assets"].Count()];
+                int i = 0;
+                foreach (var item in jo["assets"])
+                {
+                    versionInfo.ArrAssets[i] = new Assets();
+                    versionInfo.ArrAssets[i].Name = item["name"].ToString();
+                    versionInfo.ArrAssets[i].Size = Convert.ToInt64(item["size"].ToString());
+                    versionInfo.ArrAssets[i].Download_count = Convert.ToInt64(item["download_count"].ToString());
+                    versionInfo.ArrAssets[i].Browser_download_url = item["browser_download_url"].ToString();
+                    i++;
+                }
+                versionInfo.Body = jo["body"].ToString();
+            }
+            catch (Exception)
             {
                 return;
             }
-            versionInfo.Name = jo["name"].ToString();
-            versionInfo.Version = new Version(jo["tag_name"].ToString().ToUpper().Replace('V', '0'));
-            versionInfo.Created_at = Convert.ToDateTime(jo["created_at"].ToString());
-            versionInfo.Published_at = Convert.ToDateTime(jo["published_at"].ToString());
-            versionInfo.Prerelease = Convert.ToBoolean(jo["prerelease"].ToString());
-            versionInfo.ArrAssets = new Assets[jo["assets"].Count()];
-            int i = 0;
-            foreach (var item in jo["assets"])
-            {
-                versionInfo.ArrAssets[i] = new Assets();
-                versionInfo.ArrAssets[i].Name = item["name"].ToString();
-                versionInfo.ArrAssets[i].Size = Convert.ToInt64(item["size"].ToString());
-                versionInfo.ArrAssets[i].Download_count = Convert.ToInt64(item["download_count"].ToString());
-                versionInfo.ArrAssets[i].Browser_download_url = item["browser_download_url"].ToString();
-                i++;
-            }
-            versionInfo.Body = jo["body"].ToString();
 
             Console.WriteLine("输出版本信息：");
             Console.WriteLine("版本名称：" + versionInfo.Name);
