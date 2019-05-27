@@ -89,14 +89,8 @@ namespace UpdataApp
             }
             swInfo.WriteLine("更新记录：\r\n" + jsonGitHub.versionInfo.Body);
 
-            ActiveUpdataInfo(EnumUpdataStatus.Done, swInfo.ToString());
+            ActiveUpdataInfo(EnumUpdataStatus.GetJson, swInfo.ToString());
 
-            //this.Invoke((MethodInvoker)delegate ()
-            //{
-            //    txtUpdataInfo.Text = swInfo.ToString();
-            //    labelInfo.Text = "获取更新完成";
-            //    btnUpdata.Enabled = true;
-            //});
         }
 
         /// <summary>
@@ -131,59 +125,32 @@ namespace UpdataApp
             switch (msg.Tag)
             {
                 case DownStatus.Start:
+                    Console.WriteLine("开始下载：" + DateTime.Now.ToString());
                     ActiveUpdataInfo(EnumUpdataStatus.DownloadFile, "正在连接服务器");
-                    //this.Invoke((MethodInvoker)delegate ()
-                    //{
-                    //    Console.WriteLine("开始下载：" + DateTime.Now.ToString());
-                    //    labelInfo.Text = "正在连接服务器";
-                    //});
                     break;
                 case DownStatus.GetLength:
-                    ActiveUpdataInfo(EnumUpdataStatus.DownloadFile, "正在连接服务器");
-                    //this.Invoke((MethodInvoker)delegate ()
-                    //{
-                    //    Console.WriteLine("连接成功：" + msg.LengthInfo);
-                    //    labelInfo.Text = "连接成功";
-                    //});
+                    Console.WriteLine("连接成功：" + msg.LengthInfo);
+                    ActiveUpdataInfo(EnumUpdataStatus.DownloadFile, "连接成功");
                     break;
                 case DownStatus.DownLoad:
                     if (msg.Tag == DownStatus.DownLoad)
                     {
+                        Console.Write("下载中：");
                         ActiveUpdataInfo(EnumUpdataStatus.DownloadFile, "下载中" + msg.Progress.ToString() + "%");
+                        //proUpdata.Value = Convert.ToInt32(msg.Progress);
                     }
                     else
                     {
+                        Console.Write("下载完成：");
                         ActiveUpdataInfo(EnumUpdataStatus.DownloadFile, "下载完成！");
+                        //proUpdata.Value = proUpdata.Maximum;
                     }
-                    //this.Invoke(new MethodInvoker(() =>
-                    //{
-                    //    this.Invoke((MethodInvoker)delegate ()
-                    //    {
-                    //        if (msg.Tag == DownStatus.DownLoad)
-                    //        {
-                    //            Console.Write("下载中：");
-                    //            labelInfo.Text = "下载中" + msg.Progress.ToString() + "%";
-                    //            proUpdata.Value = Convert.ToInt32(msg.Progress);
-                    //        }
-                    //        else
-                    //        {
-                    //            Console.Write("下载完成：");
-                    //            proUpdata.Value = proUpdata.Maximum;
-                    //        }
-                    //        Console.WriteLine(msg.SizeInfo + "\t" + msg.Progress.ToString() + "%\t" + msg.SpeedInfo + "\t" + msg.SurplusInfo);
-                    //        Application.DoEvents();
-                    //    });
-                    //}));
+                    Console.WriteLine(msg.SizeInfo + "\t" + msg.Progress.ToString() + "%\t" + msg.SpeedInfo + "\t" + msg.SurplusInfo);
                     break;
                 case DownStatus.End:
+                    Console.WriteLine("下载完成！！！");
                     ActiveUpdataInfo(EnumUpdataStatus.DownloadFile, "下载完成！");
-                    //this.Invoke((MethodInvoker)delegate ()
-                    //{
-                    //    Console.WriteLine("下载完成！！！");
-                    //    labelInfo.Text = "下载完成";
-                    //    proUpdata.Value = proUpdata.Maximum;
-                    //    //System.Diagnostics.Process.Start(strDownFilePath);
-                    //});
+
                     //开始更新
                     if (File.Exists(strDownFilePath))
                     {
@@ -209,27 +176,14 @@ namespace UpdataApp
                         TimeSpan timespan = watch.Elapsed;
                         Console.WriteLine("解压缩执行时间：{0}(毫秒)", timespan.TotalMilliseconds);  //总毫秒数
 
-                        ActiveUpdataInfo(EnumUpdataStatus.Updata, "更新完成");
-                        //this.Invoke((MethodInvoker)delegate ()
-                        //{
-                        //    Console.WriteLine("更新完成");
-                        //    labelInfo.Text = "更新完成";
-                        //    proUpdata.Value = proUpdata.Maximum;
-                        //    if (MessageBox.Show("是否运行更新后的程序？", "更新完成", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
-                        //    {
-                        //        Process.Start(System.AppDomain.CurrentDomain.BaseDirectory + "BleTestTool.exe");
-                        //    }
-                        //    Application.Exit();
-                        //});
+                        Console.WriteLine("更新完成");
+                        ActiveUpdataInfo(EnumUpdataStatus.Done, "更新完成");
+                        //proUpdata.Value = proUpdata.Maximum;
                     }
                     break;
                 case DownStatus.Error:
                     ActiveUpdataInfo(EnumUpdataStatus.Error, "下载失败：" + msg.ErrMessage);
-                    //this.Invoke((MethodInvoker)delegate ()
-                    //{
-                    //    Console.WriteLine("下载失败：" + msg.ErrMessage);
-                    //    labelInfo.Text = "下载失败：" + msg.ErrMessage;
-                    //});
+                    Console.WriteLine("下载失败：" + msg.ErrMessage);
                     break;
                 default:
                     break;

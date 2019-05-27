@@ -1,17 +1,11 @@
-﻿using Gac;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
-using System.Drawing;
-using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Windows.Forms;
 
 namespace UpdataApp
@@ -44,23 +38,39 @@ namespace UpdataApp
 
         private void UpdataInfo_Event(object sender, EnumUpdataStatus status, string msg)
         {
-            Console.WriteLine(status.ToString() + "\t->\t" + msg);
+            //Console.WriteLine(status.ToString() + "\t->\t" + msg);
             this.Invoke(new Action(() =>
             {
                 switch (status)
                 {
                     case EnumUpdataStatus.Start:
+                        labelInfo.Text = msg;
+                        Application.DoEvents();
                         break;
                     case EnumUpdataStatus.GetJson:
+                        txtUpdataInfo.Text = msg;
+                        labelInfo.Text = "获取更新完成";
+                        btnUpdata.Enabled = true;
                         break;
                     case EnumUpdataStatus.DownloadFile:
+                        labelInfo.Text = msg;
+                        Application.DoEvents();
                         break;
                     case EnumUpdataStatus.Updata:
+                        labelInfo.Text = msg;
+                        Application.DoEvents();
                         break;
                     case EnumUpdataStatus.Done:
-                        txtUpdataInfo.Text = msg;
+                        labelInfo.Text = msg;
+                        Application.DoEvents();
+                        if (MessageBox.Show("是否运行更新后的程序？", "更新完成", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
+                        {
+                            Process.Start(System.AppDomain.CurrentDomain.BaseDirectory + "BleTestTool.exe");
+                        }
+                        Application.Exit();
                         break;
                     case EnumUpdataStatus.Error:
+                        MessageBox.Show(msg, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         break;
                     default:
                         break;
