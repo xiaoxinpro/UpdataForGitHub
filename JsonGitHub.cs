@@ -15,6 +15,10 @@ namespace UpdataApp
 
         public JsonGitHub(JObject jo)
         {
+            if (jo == null)
+            {
+                return;
+            }
             versionInfo.Name = jo["name"].ToString();
             versionInfo.Version = new Version(jo["tag_name"].ToString().ToUpper().Replace('V', '0'));
             versionInfo.Created_at = Convert.ToDateTime(jo["created_at"].ToString());
