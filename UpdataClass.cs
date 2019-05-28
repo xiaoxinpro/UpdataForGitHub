@@ -29,13 +29,21 @@ namespace UpdataApp
         /// </summary>
         public void InitData()
         {
-            Username = "";
-            Project = "";
-            Title = "";
+            Username = "xiaoxinpro";
+            Project = "BleTestTool";
+            Title = "软件升级工具";
             Run = "";
             Version = Version.Parse("0.0.0.1");
             IsAutoRun = false;
             InitDownLoadFile();
+        }
+
+        /// <summary>
+        /// 获取URL
+        /// </summary>
+        private string GetUrl()
+        {
+            return JsonGitHub.URL.Replace("Username", Username.Trim()).Replace("Project", Project.Trim());
         }
 
         /// <summary>
@@ -75,7 +83,7 @@ namespace UpdataApp
         /// </summary>
         private void GetGitHubInfo(string fileName = "updata.zip")
         {
-            string strCode = HttpHelper.Send(JsonGitHub.URL);
+            string strCode = HttpHelper.Send(GetUrl());
 
             JsonGitHub jsonGitHub = new JsonGitHub(strCode);
 

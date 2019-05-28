@@ -9,7 +9,7 @@ namespace UpdataApp
 {
     public class JsonGitHub
     {
-        public const string URL = "https://api.github.com/repos/xiaoxinpro/BleTestTool/releases/latest";
+        public const string URL = "https://api.github.com/repos/Username/Project/releases/latest";
 
         public VersionInfo versionInfo = new VersionInfo();
 
