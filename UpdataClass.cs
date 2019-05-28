@@ -25,9 +25,9 @@ namespace UpdataApp
         public Boolean IsAutoRun { get; set; }
 
         /// <summary>
-        /// 构造函数
+        /// 初始化数据
         /// </summary>
-        public UpdataClass()
+        public void InitData()
         {
             Username = "";
             Project = "";
@@ -36,6 +36,14 @@ namespace UpdataApp
             Version = Version.Parse("0.0.0.1");
             IsAutoRun = false;
             InitDownLoadFile();
+        }
+
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        public UpdataClass()
+        {
+            InitData();
         }
 
         public UpdataClass(DelegateUpdataInfo e):this()
