@@ -124,6 +124,7 @@ namespace UpdataApp
             proUpdata.Value = 0;
             txtUpdataInfo.Clear();
             btnUpdata.Enabled = false;
+            this.Text = UpdataInfo.Title + " V" + Application.ProductVersion.ToString();
             UpdataInfo.Get();
         }
 
