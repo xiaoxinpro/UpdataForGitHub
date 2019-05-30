@@ -24,7 +24,17 @@ https://api.github.com/repos/用户名/项目名/releases/latest
 
 ## 2、使用的类库说明
 
-后续详细更新...
+### 2.1 文件下载类库 DownLoadFile
+
+DownLoadFile.dll负责更新文件下载任务，支持多线程与下载进度回调，调用方便快捷。
+
+### 2.2 压缩文件处理类库 ICSharpCode.SharpZipLib
+
+ICSharpCode.SharpZipLib.dll是一款ZIP文件压缩解压缩的类库，配合ZipHelper使用，轻松完成更新文件的解压缩工作。
+
+### 2.3 JSON解析类库 Newtonsoft.Json
+
+Newtonsoft.Json.dll是一款.NET中开源的Json序列化和反序列化类库，根据Github的API完成JsonGitHub的解析工作。
 
 
 ## 3、未来将添加的功能
