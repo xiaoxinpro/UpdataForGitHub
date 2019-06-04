@@ -36,10 +36,18 @@ ICSharpCode.SharpZipLib.dll是一款ZIP文件压缩解压缩的类库，配合Zi
 
 Newtonsoft.Json.dll是一款.NET中开源的Json序列化和反序列化类库，根据Github的API完成JsonGitHub的解析工作。
 
-
-## 3、未来将添加的功能
+## 3、使用说明
 
 使用API动态调用UpdataForGitHub，实现多样化自定义功能。
+
+参数 | 说明 | 备注  
+-|-|-
+Username | Github用户名 | 必填，例如：xiaoxinpro |
+Project | Github项目名 | 必填，例如：UpdataForGitHub |
+Version | 当前版本号 | 必填，例如：0.1.0.0 |
+Title | 显示在窗口的标题 | 选填，默认：软件升级工具 |
+IsAutoRun | 是否更新完成自动运行 |选填，默认：False |
+Run | 需要运行的文件名 | 若选择IsAutoRun则填写相应的文件名 |
 
 ## 4、已知局限性
 
