@@ -81,6 +81,7 @@ namespace UpdataApp
         /// <summary>
         /// 获取GitHub信息
         /// </summary>
+        /// <param name="fileName">需要更新的文件名</param>
         private void GetGitHubInfo(string fileName = "updata.zip")
         {
             string strCode = HttpHelper.Send(GetUrl());
@@ -205,7 +206,21 @@ namespace UpdataApp
 
                         Console.WriteLine("更新完成");
                         ActiveUpdataInfo(EnumUpdataStatus.Done, "更新完成");
-                        //proUpdata.Value = proUpdata.Maximum;
+                        if (IsAutoRun)
+                        {
+                            string strRunPath = System.AppDomain.CurrentDomain.BaseDirectory + Run;
+                            if (File.Exists(strRunPath))
+                            {
+                                try
+                                {
+                                    System.Diagnostics.Process.Start(strRunPath);
+                                }
+                                catch (Exception)
+                                {
+
+                                }
+                            }
+                        }
                         isRunStart = false;
                     }
                     break;
@@ -225,7 +240,7 @@ namespace UpdataApp
         /// <summary>
         /// 获取更新信息
         /// </summary>
-        /// <param name="fileName">需要跟新的文件名.zip</param>
+        /// <param name="fileName">需要更新的文件名.zip</param>
         public void Get(string fileName = "updata.zip")
         {
             if (isRunGet)
